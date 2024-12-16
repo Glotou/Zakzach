@@ -1,43 +1,683 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zak Zach هو موقع يقدم خدمات مميزة.">
+    <meta name="author" content="Zak Zach Team">
+    <title>Zak Zach</title>
+    <style>
+        
+        
+        
+        /* التصميم الأساسي */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        nav {
+            background: #444;
+            display: flex;
+            justify-content: center;
+            padding: 1rem 0;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+        }
+        nav a:hover {
+            background: #555;
+        }
+        section {
+            padding: 3rem 1.5rem;
+        }
+        .hero {
+            background: url('https://via.placeholder.com/1920x600') no-repeat center center/cover;
+            color: #fff;
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+        .hero h2 {
+            font-size: 3rem;
+        }
+        .services, .blog {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: space-between;
+        }
+        .service, .blog-post {
+            flex: 1 1 calc(33.333% - 1rem);
+            background: #f4f4f4;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        form {
+            margin: 3rem auto;
+            padding: 1.5rem;
+            max-width: 600px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.2rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.2rem;
+            color: white;
+            background: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #555;
+        }
+        footer {
+            margin-top: 3rem;
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+        }
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+        /* التصميم المتجاوب (Responsive Design) */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem; /* تقليل حجم النص */
+            }
+            .hero h2 {
+                font-size: 2rem; /* تقليل حجم النص */
+            }
+            nav a {
+                padding: 0.5rem; /* تقليل المسافة داخل الروابط */
+                margin: 0.5rem; /* تقليل المسافة بين الروابط */
+            }
+            .services, .blog {
+                flex-direction: column; /* ترتيب العناصر عموديًا */
+                gap: 1rem; /* تقليل المسافة بين العناصر */
+            }
+            .service, .blog-post {
+                flex: 1 1 100%; /* جعل العناصر تأخذ 100% عرض */
+                margin-bottom: 1.5rem; /* إضافة المسافة بين العناصر */
+            }
+            form {
+                width: 90%; /* جعل النموذج يأخذ عرض أكبر على الشاشات الصغيرة */
+                padding: 1rem;
+            }
+            button {
+                font-size: 1rem; /* تقليل حجم الخط */
+                padding: 0.5rem 1rem; /* تقليل المسافة داخل الزر */
+            }
+        }
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+        /* تصميم لافتة الترحيب */
+        .welcome-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            transform-origin: top;
+            transform: scaleY(0);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+        /* الحركات */
+        .banner-open {
+            transform: scaleY(1);
+        }
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+        .banner-close {
+            transform: scaleY(0);
+        }
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        /* حاوية التحديث */
+        #spinnerContainer {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            z-index: 9999;
+        }
+
+        /* تصميم الدائرة الحلزونية */
+        .spinner {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: spin 3s ease-in-out infinite;
+        }
+
+        .spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            background-color: #3498db;
+            border-radius: 50%;
+            animation: spiral 3s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spiral {
+            0% {
+                transform: translate(0, 0) scale(0.5);
+                opacity: 1;
+            }
+            25% {
+                transform: translate(12px, -12px) scale(0.8);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(20px, 0) scale(1);
+                opacity: 0.6;
+            }
+            75% {
+                transform: translate(12px, 12px) scale(1.2);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Zak Zach</h1>
+        <p>مرحباً بكم في موقعنا الرسمي</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#home">الرئيسية</a>
+        <a href="#services">الخدمات</a>
+        <a href="#blog">المدونة</a>
+        <a href="#search">محرك البحث</a>
+        <a href="#contact">اتصل بنا</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <h2>مرحباً بكم في Zak Zach</h2>
+        <p>اكتشف خدماتنا المميزة وابقَ على اطلاع بكل جديد.</p>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services">
+        <h2>خدماتنا</h2>
+        <div class="services">
+            <div class="service">
+                <h3>الخدمة الأولى</h3>
+                <p>وصف مختصر عن الخدمة.</p>
+            </div>
+            <div class="service">
+                <h3>الخدمة الثانية</h3>
+                <p>وصف مختصر عن الخدمة.</p>
+            </div>
+            <div class="service">
+                <h3>الخدمة الثالثة</h3>
+                <p>وصف مختصر عن الخدمة.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog">
+        <h2>المدونة</h2>
+        <div class="blog">
+            <div class="blog-post">
+                <h3>عنوان المقال الأول</h3>
+                <p>ملخص صغير عن المقال.</p>
+                <a href="#">اقرأ المزيد</a>
+            </div>
+            <div class="blog-post">
+                <h3>عنوان المقال الثاني</h3>
+                <p>ملخص صغير عن المقال.</p>
+                <a href="#">اقرأ المزيد</a>
+            </div>
+            <div class="blog-post">
+                <h3>عنوان المقال الثالث</h3>
+                <p>ملخص صغير عن المقال.</p>
+                <a href="#">اقرأ المزيد</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section id="search">
+        <h2>محرك البحث</h2>
+        <form onsubmit="search(event)">
+            <input type="text" id="query" placeholder="اكتب كلمة البحث..." required="0">
+            <button type="submit">ابحث</button>
+        </form>
+        <div id="searchResult"></div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>اتصل بنا</h2>
+        <form>
+            <input type="text" placeholder="الاسم الكامل" required="0">
+            <input type="email" placeholder="البريد الإلكتروني" required="0">
+            <textarea placeholder="رسالتك" rows="5" required="0"></textarea>
+            <button type="submit">إرسال</button>
+        </form>
+    </section>
+
+    <!-- حاوية التحديث -->
+    <div id="spinnerContainer">
+        <div class="spinner"></div>
+    </div>
+
+ <!-- Footer -->
+<footer>
+    <p>© 2024 Zak Zach. جميع الحقوق محفوظة.</p>
+</footer>
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner" id="welcomeBanner">
+        مرحبًا بك في موقعنا!
+    </div>
+
+    <script>
+        // لافتة الترحيب
+        if (!sessionStorage.getItem('visited')) {
+            const banner = document.getElementById('welcomeBanner');
+            setTimeout(() => {
+                banner.classList.add('banner-open');
+            }, 100);
+            setTimeout(() => {
+                banner.classList.remove('banner-open');
+                banner.classList.add('banner-close');
+            }, 3000);
+            sessionStorage.setItem('visited', 'true');
+        }
+
+        // محرك البحث
+        function search(event) {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+            if (query.trim()) {
+                const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                window.open(searchUrl, '_blank');
+                document.getElementById('searchResult').textContent = 'تم فتح نتائج البحث في نافذة جديدة.';
+            } else {
+                alert('يرجى إدخال كلمة للبحث!');
+            }
+        }
+
+        // التحديث بواسطة السحب
+        let startY = 0;
+        let isRefreshing = false;
+        const spinnerContainer = document.getElementById('spinnerContainer');
+        window.addEventListener('touchstart', function(e) {
+            if (isRefreshing) return;
+            startY = e.touches[0].clientY;
+        });
+        window.addEventListener('touchmove', function(e) {
+            if (isRefreshing) return;
+            const distance = e.touches[0].clientY - startY;
+            if (distance > 50) {
+                spinnerContainer.style.display = 'flex'; // إظهار مؤشر التحديث
+            } else {
+                spinnerContainer.style.display = 'none'; // إخفاءه إذا لم يتم السحب بما يكفي
+            }
+        });
+        window.addEventListener('touchend', function(e) {
+            if (isRefreshing) return;
+            const distance = e.changedTouches[0].clientY - startY;
+            if (distance > 50) {
+                isRefreshing = true;
+                spinnerContainer.style.display = 'flex';
+                setTimeout(() => {
+                    window.location.reload(); // التحديث الفعلي بعد السحب
+                    isRefreshing = false;  // إعادة تعيين حالة التحديث
+                    spinnerContainer.style.display = 'none'; // إخفاء المؤشر بعد التحديث
+                }, 2000);
+            }
+        });
+    </script>
+
+    <style>
+             /* التصميم الأساسي */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        section {
+            padding: 3rem 1.5rem;
+        }
+        .comments-section {
+            margin-top: 3rem;
+        }
+        .comment-box {
+            width: 100%;
+            padding: 1rem;
+            background: #f4f4f4;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .comment-box:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+        .comment-box textarea {
+            width: 100%;
+            height: 100px;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            outline: none;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+        .comment-box textarea:focus {
+            border-color: #4CAF50;
+        }
+        .comment-box button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .comment-box button:hover {
+            background-color: #555;
+        }
+        .comment-list {
+            margin-top: 1.5rem;
+        }
+        .comment-item {
+            background: #fff;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+        .comment-item h4 {
+            margin: 0 0 0.5rem;
+            font-size: 1.2rem;
+        }
+        .comment-item p {
+            margin: 0;
+        }
+
+        /* أنيميشن لإظهار التعليقات */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .confirmation-message {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+            animation: showMessage 1s ease-in-out;
+        }
+
+        @keyframes showMessage {
+            0% {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* رسالة التحذير في حال عدم إضافة تعليق */
+        .warning-message {
+            background-color: #f44336;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+            animation: showWarningMessage 1s ease-in-out;
+        }
+
+        @keyframes showWarningMessage {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Zak Zach</h1>
+        <p>مرحباً بكم في موقعنا الرسمي</p>
+    </header>
+
+    <!-- Comments Section -->
+    <section id="comments" class="comments-section">
+        <h2>التعليقات</h2>
+
+        <!-- نموذج التعليق -->
+        <div class="comment-box">
+            <textarea id="commentText" placeholder="اكتب تعليقك هنا..."></textarea>
+            <button onclick="addComment()">إضافة تعليق</button>
+        </div>
+
+        <!-- رسالة التأكيد -->
+        <div class="confirmation-message" id="confirmationMessage">
+           🫂 تم إضافة تعليقك بنجاح
+        </div>
+
+        <!-- رسالة التحذير في حال عدم إضافة تعليق -->
+        <div class="warning-message" id="warningMessage">
+           🤬 يرجى كتابة تعليق قبل الإرسال
+        </div>
+
+        <!-- قائمة التعليقات -->
+        <div class="comment-list" id="commentList">
+            <!-- التعليقات ستضاف هنا باستخدام JavaScript -->
+        </div>
+    </section>
+
+    <script>
+        // دالة لإضافة تعليق
+        function addComment() {
+            const commentText = document.getElementById("commentText").value;
+            const confirmationMessage = document.getElementById("confirmationMessage");
+            const warningMessage = document.getElementById("warningMessage");
+
+            // التحقق من عدم وجود تعليق فارغ
+            if (commentText.trim() === "") {
+                warningMessage.style.display = "block"; // إظهار رسالة التحذير
+                setTimeout(() => {
+                    warningMessage.style.display = "none"; // إخفاء رسالة التحذير بعد 3 ثواني
+                }, 3000);
+                return;
+            }
+
+            // إضافة التعليق إلى القائمة
+            const commentList = document.getElementById("commentList");
+
+            const commentItem = document.createElement("div");
+            commentItem.classList.add("comment-item");
+
+            const commentHeader = document.createElement("h4");
+            commentHeader.textContent = "مستخدم جديد"; // يمكن تخصيصه حسب المستخدم
+            commentItem.appendChild(commentHeader);
+
+            const commentContent = document.createElement("p");
+            commentContent.textContent = commentText;
+            commentItem.appendChild(commentContent);
+
+            commentList.appendChild(commentItem);
+
+            // إظهار رسالة التأكيد
+            confirmationMessage.style.display = "block";
+
+            // إخفاء رسالة التأكيد بعد 3 ثواني
+            setTimeout(() => {
+                confirmationMessage.style.display = "none";
+            }, 3000);
+
+            // إعادة تعيين مربع النص بعد الإضافة
+            document.getElementById("commentText").value = "";
+        }
+    </script>
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+
+        /* تنسيق الأزرار */
+        .social-links {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .social-link {
+            background-color: #333;
+            color: white;
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background-color: #4CAF50;
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-link i {
+            font-size: 20px;
+        }
+
+        /* تأثيرات الأنيميشن */
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        .social-link:nth-child(1) {
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .social-link:nth-child(2) {
+            animation: bounce 1.2s ease-in-out infinite;
+        }
+
+        .social-link:nth-child(3) {
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+
+        .social-link:nth-child(4) {
+            animation: bounce 1.6s ease-in-out infinite;
+        }
+   
+  </style>
+
+
+</body>
+</html>
